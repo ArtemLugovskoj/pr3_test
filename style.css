@@ -474,3 +474,9 @@ h1 {
 .action label {
     padding: 6px 0;
 }
+
+#logs p {
+    color: #000000;
+    font-size: 18px;
+    font-weight: bold;
+}

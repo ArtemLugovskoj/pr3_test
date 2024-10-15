@@ -1,4 +1,6 @@
 const $btn = document.getElementById('btn-kick');
+const $btn2 = document.getElementById('btn2');
+const $logs = document.getElementById('logs');
 
 const character = {
     name: 'Pikachu',
@@ -6,20 +8,20 @@ const character = {
     damageHP: 100,
     elHP: document.getElementById('health-character'),
     elProgressbar: document.getElementById('progressbar-character'),
-    renderHP: function() {
+    renderHP() {
         this.renderHPLife();
         this.renderProgressbarHP();
     },
-    renderHPLife: function() {
-        this.elHP.innerText = this.damageHP + '/' + this.defaultHP;
+    renderHPLife() {
+        this.elHP.innerText = `${this.damageHP} / ${this.defaultHP}`;
     },
-    renderProgressbarHP: function() {
-        this.elProgressbar.style.width = (this.damageHP / this.defaultHP * 100) + '%';
+    renderProgressbarHP() {
+        this.elProgressbar.style.width = `${(this.damageHP / this.defaultHP) * 100}%`;
     },
-    changeHP: function(count) {
+    changeHP(count) {
         if (this.damageHP < count) {
             this.damageHP = 0;
-            alert('Бедный ' + this.name + ' проиграл бой!');
+            alert(`Бедный ${this.name} проиграл бой!`);
             $btn.disabled = true;
         } else {
             this.damageHP -= count;
@@ -34,20 +36,20 @@ const enemy = {
     damageHP: 100,
     elHP: document.getElementById('health-enemy'),
     elProgressbar: document.getElementById('progressbar-enemy'),
-    renderHP: function() {
+    renderHP() {
         this.renderHPLife();
         this.renderProgressbarHP();
     },
-    renderHPLife: function() {
-        this.elHP.innerText = this.damageHP + '/' + this.defaultHP;
+    renderHPLife() {
+        this.elHP.innerText = `${this.damageHP} / ${this.defaultHP}`;
     },
-    renderProgressbarHP: function() {
-        this.elProgressbar.style.width = (this.damageHP / this.defaultHP * 100) + '%';
+    renderProgressbarHP() {
+        this.elProgressbar.style.width = `${(this.damageHP / this.defaultHP) * 100}%`;
     },
-    changeHP: function(count) {
+    changeHP(count) {
         if (this.damageHP < count) {
             this.damageHP = 0;
-            alert('Бедный ' + this.name + ' проиграл бой!');
+            alert(`Бедный ${this.name} проиграл бой!`);
             $btn.disabled = true;
         } else {
             this.damageHP -= count;
@@ -55,12 +57,6 @@ const enemy = {
         this.renderHP();
     }
 };
-
-$btn.addEventListener('click', function () {
-    console.log('Kick');
-    character.changeHP(random(20));
-    enemy.changeHP(random(20));
-});
 
 function init() {
     console.log('Start Game!');
@@ -72,17 +68,38 @@ function random(num) {
     return Math.ceil(Math.random() * num);
 }
 
-init();
+function addLog(log) {
+    const logEntry = document.createElement('p');
+    logEntry.innerText = log;
+    $logs.prepend(logEntry);
+}
 
-// 2 task
-const $btn2 = document.getElementById('btn2');
+
+$btn.addEventListener('click', function () {
+    const damageCharacter = random(20);
+    const damageEnemy = random(20);
+
+    character.changeHP(damageCharacter);
+    enemy.changeHP(damageEnemy);
+
+    const characterLog = generateLog(character, enemy, damageCharacter);
+    const enemyLog = generateLog(enemy, character, damageEnemy);
+
+    addLog(characterLog);
+    addLog(enemyLog);
+});
 
 function randomDamage() {
-    return Math.random() < 0.5 ? character : enemy; 
+    return Math.random() < 0.5 ? character : enemy;
 }
 
 $btn2.addEventListener('click', function () {
-    console.log('Kick');
     const target = randomDamage();
-    target.changeHP(45); 
+    const damage = 45;
+    target.changeHP(damage);
+    
+    const log = generateLog(target, target === character ? enemy : character, damage);
+    addLog(log);
 });
+
+init();

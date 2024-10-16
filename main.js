@@ -2,6 +2,24 @@ const $btn = document.getElementById('btn-kick');
 const $btn2 = document.getElementById('btn2');
 const $logs = document.getElementById('logs');
 
+const createClickCounter = (maxClicks) => {
+    let count = 0;
+
+    return () => {
+        if (count < maxClicks) {
+            count++;
+            console.log(`Кліків: ${count}, Залишилось: ${maxClicks - count}`);
+            return true; 
+        } else {
+            console.log("Максимальна кількість натискань досягнута.");
+            return false; 
+        }
+    };
+};
+
+const kickCounter = createClickCounter(6);
+const specialCounter = createClickCounter(3); 
+
 const character = {
     name: 'Pikachu',
     defaultHP: 100,
@@ -74,19 +92,20 @@ function addLog(log) {
     $logs.prepend(logEntry);
 }
 
-
 $btn.addEventListener('click', function () {
-    const damageCharacter = random(20);
-    const damageEnemy = random(20);
+    if (kickCounter()) {  
+        const damageCharacter = random(20);
+        const damageEnemy = random(20);
 
-    character.changeHP(damageCharacter);
-    enemy.changeHP(damageEnemy);
+        character.changeHP(damageCharacter);
+        enemy.changeHP(damageEnemy);
 
-    const characterLog = generateLog(character, enemy, damageCharacter);
-    const enemyLog = generateLog(enemy, character, damageEnemy);
+        const characterLog = generateLog(character, enemy, damageCharacter);
+        const enemyLog = generateLog(enemy, character, damageEnemy);
 
-    addLog(characterLog);
-    addLog(enemyLog);
+        addLog(characterLog);
+        addLog(enemyLog);
+    }
 });
 
 function randomDamage() {
@@ -94,12 +113,14 @@ function randomDamage() {
 }
 
 $btn2.addEventListener('click', function () {
-    const target = randomDamage();
-    const damage = 45;
-    target.changeHP(damage);
-    
-    const log = generateLog(target, target === character ? enemy : character, damage);
-    addLog(log);
+    if (specialCounter()) { 
+        const target = randomDamage();
+        const damage = 45;
+        target.changeHP(damage);
+
+        const log = generateLog(target, target === character ? enemy : character, damage);
+        addLog(log);
+    }
 });
 
 init();

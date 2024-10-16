@@ -8,7 +8,7 @@ const createClickCounter = (maxClicks) => {
     return () => {
         if (count < maxClicks) {
             count++;
-            console.log(`Кліків: ${count}, Залишилось: ${maxClicks - count}`);
+            console.log(`Натиснень: ${count}, Залишилось натискань: ${maxClicks - count}`);
             return true; 
         } else {
             console.log("Максимальна кількість натискань досягнута.");

@@ -33,6 +33,18 @@ body {
     right: 0;
     opacity: .4;
 }
+.control-enemy {
+    width: 320px;
+    height: 260px;
+    position: relative;
+    margin: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    display: flex;
+    flex-direction: column;
+}
 
 .control {
     width: 320px;
@@ -43,6 +55,8 @@ body {
     justify-content: center;
     align-items: center;
     gap: 15px;
+    display: flex;
+    flex-direction: column;
 }
 
 .playground {
@@ -158,7 +172,7 @@ body {
     left: 50%;
     -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
-    max-width: 150px;
+    max-width: 120px;
     border-radius: 10px;
 }
 .pokemon .details {

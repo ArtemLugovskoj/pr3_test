@@ -1,49 +1,82 @@
 import { Pokemon } from './pokemon.js';
-import { createClickCounter, random, addLog } from './utils.js';
+import { createClickCounter, random } from './utils.js';
 import { generateLog } from './logs.js';
+import { pokemons } from './pokemons.js'; 
 
-const $btn = document.getElementById('btn-kick');
-const $btn2 = document.getElementById('btn2');
 const $logs = document.getElementById('logs');
+const $game = document.getElementById('refresh-btn');
 
-const kickCounter = createClickCounter(6);
-const specialCounter = createClickCounter(3);
+$game.addEventListener('click', () => {
+    location. reload()
+});
 
-const character = new Pokemon('Pikachu', 100, document.getElementById('health-character'), document.getElementById('progressbar-character'));
-const enemy = new Pokemon('Charmander', 100, document.getElementById('health-enemy'), document.getElementById('progressbar-enemy'));
+
+function getRandomPokemon(excludedName) {
+    let randomPokemon;
+    do {
+        const randomIndex = Math.floor(Math.random() * pokemons.length);
+        randomPokemon = pokemons[randomIndex];
+    } while (randomPokemon.name === excludedName); 
+    return randomPokemon;
+}
+
+let player1Data = getRandomPokemon(""); 
+let player1 = new Pokemon({
+    name: player1Data.name,
+    defaultHP: player1Data.hp,
+    elHPId: 'health-character',
+    elProgressbarId: 'progressbar-character',
+});
+
+let player2Data = getRandomPokemon(player1Data.name); 
+let player2 = new Pokemon({
+    name: player2Data.name,
+    defaultHP: player2Data.hp,
+    elHPId: 'health-enemy',
+    elProgressbarId: 'progressbar-enemy',
+});
 
 function init() {
     console.log('Start Game!');
-    character.renderHP();
-    enemy.renderHP();
+    updatePlayerDisplay(player1, player2);
+    player1.renderHP();
+    player2.renderHP();
+    createAttackButtons(player1, '.control', player1Data.attacks); 
+    createAttackButtons(player2, '.control-enemy', player2Data.attacks); 
 }
 
-$btn.addEventListener('click', function () {
-    if (kickCounter()) {
-        const damageCharacter = random(20);
-        const damageEnemy = random(20);
+function updatePlayerDisplay(player1, player2) {
+    document.getElementById('name-character').innerText = player1.name;
+    document.querySelector('.sprite').src = player1Data.img;
+    document.getElementById('name-enemy').innerText = player2.name;
+    document.querySelector('.enemy .sprite').src = player2Data.img;
+}
 
-        character.changeHP(damageCharacter);
-        enemy.changeHP(damageEnemy);
+function createAttackButtons(player, controlSelector, attacks) {
+    const controlDiv = document.querySelector(controlSelector);
+    attacks.forEach((attack, index) => {
+        const button = document.createElement('button');
+        button.classList.add('button');
+        button.innerText = attack.name;
+        button.id = `btn-attack-${player.name}-${index}`; 
+        button.addEventListener('click', () => {
+            handleAttack(player === player1 ? player2 : player1, attack);
+        });
+        controlDiv.appendChild(button);
+    });
+}
 
-        const characterLog = generateLog(character, enemy, damageCharacter);
-        const enemyLog = generateLog(enemy, character, damageEnemy);
+function handleAttack(target, attack) {
+    const damage = random(attack.maxDamage - attack.minDamage) + attack.minDamage;
+    target.changeHP(damage);
+    const log = generateLog(player1, target, damage);
+    addLog(log);
+}
 
-        addLog(characterLog, $logs);
-        addLog(enemyLog, $logs);
-    }
-});
-
-$btn2.addEventListener('click', function () {
-    if (specialCounter()) {
-        const target = Math.random() < 0.5 ? character : enemy;
-        const damage = 45;
-        target.changeHP(damage);
-
-        const log = generateLog(target, target === character ? enemy : character, damage);
-        addLog(log, $logs);
-    }
-});
-
+function addLog(log) {
+    const logEntry = document.createElement('p');
+    logEntry.innerText = log;
+    $logs.prepend(logEntry);
+}
 
 init();

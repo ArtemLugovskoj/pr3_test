@@ -1,4 +1,6 @@
-function generateLog({ name: charName, damageHP: charDamageHP, defaultHP: charDefaultHP }, { name: enemyName }, damage) {
+import { random } from './utils.js';
+
+export function generateLog({ name: charName, damageHP: charDamageHP, defaultHP: charDefaultHP }, { name: enemyName }, damage) {
     const logs = [
         `${charName} вспомнил что-то важное, но неожиданно ${enemyName}, не помня себя от испуга, ударил в предплечье врага.`,
         `${charName} поперхнулся, и за это ${enemyName} с испугу приложил прямой удар коленом в лоб врага.`,
@@ -13,7 +15,7 @@ function generateLog({ name: charName, damageHP: charDamageHP, defaultHP: charDe
     ];
 
     const log = logs[random(logs.length) - 1];
-    const lossInfo = `Завдано втрат: ${damage}, осталось HP: ${charDamageHP}/${charDefaultHP}`;
+    const lossInfo = `Завдано втрат: ${damage}, залишилось HP: ${charDamageHP}/${charDefaultHP}`;
     
     return `${log} ${lossInfo}`;
 }

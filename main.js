@@ -1,80 +1,16 @@
+import { Pokemon } from './pokemon.js';
+import { createClickCounter, random, addLog } from './utils.js';
+import { generateLog } from './logs.js';
+
 const $btn = document.getElementById('btn-kick');
 const $btn2 = document.getElementById('btn2');
 const $logs = document.getElementById('logs');
 
-const createClickCounter = (maxClicks) => {
-    let count = 0;
-
-    return () => {
-        if (count < maxClicks) {
-            count++;
-            console.log(`Натиснень: ${count}, Залишилось натискань: ${maxClicks - count}`);
-            return true; 
-        } else {
-            console.log("Максимальна кількість натискань досягнута.");
-            return false; 
-        }
-    };
-};
-
 const kickCounter = createClickCounter(6);
-const specialCounter = createClickCounter(3); 
+const specialCounter = createClickCounter(3);
 
-const character = {
-    name: 'Pikachu',
-    defaultHP: 100,
-    damageHP: 100,
-    elHP: document.getElementById('health-character'),
-    elProgressbar: document.getElementById('progressbar-character'),
-    renderHP() {
-        this.renderHPLife();
-        this.renderProgressbarHP();
-    },
-    renderHPLife() {
-        this.elHP.innerText = `${this.damageHP} / ${this.defaultHP}`;
-    },
-    renderProgressbarHP() {
-        this.elProgressbar.style.width = `${(this.damageHP / this.defaultHP) * 100}%`;
-    },
-    changeHP(count) {
-        if (this.damageHP < count) {
-            this.damageHP = 0;
-            alert(`Бедный ${this.name} проиграл бой!`);
-            $btn.disabled = true;
-        } else {
-            this.damageHP -= count;
-        }
-        this.renderHP();
-    }
-};
-
-const enemy = {
-    name: 'Charmander',
-    defaultHP: 100,
-    damageHP: 100,
-    elHP: document.getElementById('health-enemy'),
-    elProgressbar: document.getElementById('progressbar-enemy'),
-    renderHP() {
-        this.renderHPLife();
-        this.renderProgressbarHP();
-    },
-    renderHPLife() {
-        this.elHP.innerText = `${this.damageHP} / ${this.defaultHP}`;
-    },
-    renderProgressbarHP() {
-        this.elProgressbar.style.width = `${(this.damageHP / this.defaultHP) * 100}%`;
-    },
-    changeHP(count) {
-        if (this.damageHP < count) {
-            this.damageHP = 0;
-            alert(`Бедный ${this.name} проиграл бой!`);
-            $btn.disabled = true;
-        } else {
-            this.damageHP -= count;
-        }
-        this.renderHP();
-    }
-};
+const character = new Pokemon('Pikachu', 100, document.getElementById('health-character'), document.getElementById('progressbar-character'));
+const enemy = new Pokemon('Charmander', 100, document.getElementById('health-enemy'), document.getElementById('progressbar-enemy'));
 
 function init() {
     console.log('Start Game!');
@@ -82,18 +18,8 @@ function init() {
     enemy.renderHP();
 }
 
-function random(num) {
-    return Math.ceil(Math.random() * num);
-}
-
-function addLog(log) {
-    const logEntry = document.createElement('p');
-    logEntry.innerText = log;
-    $logs.prepend(logEntry);
-}
-
 $btn.addEventListener('click', function () {
-    if (kickCounter()) {  
+    if (kickCounter()) {
         const damageCharacter = random(20);
         const damageEnemy = random(20);
 
@@ -103,24 +29,21 @@ $btn.addEventListener('click', function () {
         const characterLog = generateLog(character, enemy, damageCharacter);
         const enemyLog = generateLog(enemy, character, damageEnemy);
 
-        addLog(characterLog);
-        addLog(enemyLog);
+        addLog(characterLog, $logs);
+        addLog(enemyLog, $logs);
     }
 });
 
-function randomDamage() {
-    return Math.random() < 0.5 ? character : enemy;
-}
-
 $btn2.addEventListener('click', function () {
-    if (specialCounter()) { 
-        const target = randomDamage();
+    if (specialCounter()) {
+        const target = Math.random() < 0.5 ? character : enemy;
         const damage = 45;
         target.changeHP(damage);
 
         const log = generateLog(target, target === character ? enemy : character, damage);
-        addLog(log);
+        addLog(log, $logs);
     }
 });
+
 
 init();
